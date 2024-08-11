@@ -5,12 +5,21 @@
    "build": {
       "development": {
          "developmentClient": true,
-         "distribution": "internal"
+         "distribution": "internal",
+         "env": {
+            "EXPO_PUBLIC_API_KEY": ""
+         }
       },
       "preview": {
-         "distribution": "internal"
+         "distribution": "internal",
+         "env": {
+            "EXPO_PUBLIC_API_KEY": ""
+         }
       },
-      "production": {}
+      "production": {
+         "env": {
+            "EXPO_PUBLIC_API_KEY": ""
+         }}
    },
    "submit": {
       "production": {}
