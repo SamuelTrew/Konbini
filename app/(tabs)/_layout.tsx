@@ -1,10 +1,9 @@
-import React from "react"
-
 import { Tabs } from "expo-router"
+import React from "react"
+import { useColorScheme } from "react-native"
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon"
 import { Colors } from "@/constants/Colors"
-import { useColorScheme } from "react-native"
 
 export default function TabLayout() {
    const colorScheme = useColorScheme()
@@ -26,9 +25,9 @@ export default function TabLayout() {
             }}
          />
          <Tabs.Screen
-            name="explore"
+            name="about"
             options={{
-               title: "Explore",
+               title: "About",
                tabBarIcon: ({ color, focused }) => (
                   <TabBarIcon color={color} name={focused ? "code-slash" : "code-slash-outline"} />
                ),

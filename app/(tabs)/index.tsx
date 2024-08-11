@@ -1,44 +1,27 @@
 /* eslint-disable prettier/prettier */
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { StyleSheet, Button, ScrollView } from "react-native"
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps"
+import { SafeAreaView } from "react-native-safe-area-context"
 
-import * as Location from "expo-location"
-import { StyleSheet, Button, ScrollView, View } from "react-native"
-import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps"
-
+import { MapMarkers } from "@/components/map-markers"
+import { Route } from "@/components/map-route/get-directions"
+import { MapViewRoute } from "@/components/map-route/map-view-route"
 import { ThemedText } from "@/components/ThemedText"
 import { LAT, LONG } from "@/constants/map"
-import { getTextSearch, Place } from "@/utils/getTextSearch"
+import { useLocation } from "@/hooks/use-location"
+import { getTextSearch, Place } from "@/utils/get-text-search"
+import { getNearestPlace } from "@/utils/getNearestPlace"
 
 export default function HomeScreen() {
-   const [errMessage, setErr] = useState<string>()
-   const [location, setLocation] = useState<Location.LocationObject>()
-   const [searchRes, setRes] = useState<Place[]>()
-
-   const requestLocationPermission = async () => {
-      const result = await Location.requestForegroundPermissionsAsync()
-      if (result.granted) {
-         setLocation(
-            await Location.getCurrentPositionAsync({
-               accuracy: Location.LocationAccuracy.BestForNavigation,
-               timeInterval: 1000,
-               distanceInterval: 5,
-            }),
-         )
-         setErr(undefined)
-         return
-      }
-
-      setErr(
-         "Permission to access location was denied. Please enable to allow the app to function.",
-      )
-   }
-
-   useEffect(() => {
-      void requestLocationPermission()
-   }, [])
+   const [places, setPlaces] = useState<Place[]>()
+   const { location, errMessage } = useLocation()
+   const [nearestPlace, setNearest] = useState<LatLng>()
+   const [route, setRoute] = useState<Route>()
+   const [routeErr, setRouteErr] = useState<string>()
 
    return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
          <MapView
             camera={{
                zoom: 13,
@@ -46,55 +29,50 @@ export default function HomeScreen() {
                heading: 0,
                pitch: 0,
             }}
-            provider={PROVIDER_GOOGLE}
             initialRegion={{
                latitude: LAT,
                longitude: LONG,
                latitudeDelta: LAT,
                longitudeDelta: LONG,
             }}
-            // initialRegion={location && {latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: location.coords.latitude, longitudeDelta: location.coords.longitude}}
+            provider={PROVIDER_GOOGLE}
             style={styles.map}
          >
             {location && (
                <Marker coordinate={{ latitude: LAT, longitude: LONG }} pinColor="green" />
             )}
-            {searchRes?.map(({ location, displayName, currentOpeningHours }) => {
-               const weekday = [
-                  "Sunday",
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-               ]
-               const title = currentOpeningHours.weekdayDescriptions.find((d) =>
-                  d.startsWith(weekday[new Date().getDay()]),
-               )
-               return (
-                  <Marker coordinate={location} key={`${location.latitude}-${location.longitude}`}>
-                     <Callout>
-                        <ScrollView>
-                           <ThemedText>{`${displayName.text}\n${title?.split(": ").at(-1)}`}</ThemedText>
-                        </ScrollView>
-                     </Callout>
-                  </Marker>
-               )
-            })}
+            {places && <MapMarkers places={places} />}
+            <MapViewRoute
+               destination={nearestPlace}
+               origin={{
+                  latitude: LAT,
+                  longitude: LONG,
+               }}
+               onError={setRouteErr}
+               onSuccess={setRoute}
+            />
          </MapView>
          <Button
             title="Click"
             onPress={async () => {
-               setRes(await getTextSearch())
+               const results = await getTextSearch()
+               setPlaces(results)
+               setNearest(
+                  getNearestPlace(
+                     { latitude: LAT, longitude: LONG },
+                     results.map((r) => r.location),
+                  ),
+               )
             }}
          ></Button>
          {errMessage && <ThemedText>{errMessage}</ThemedText>}
+         <ThemedText>
+            {route ? `Distance: ${route.distance}. Time: ${route.duration}` : "No route exists"}
+         </ThemedText>
          <ScrollView>
-            <ThemedText>{JSON.stringify(searchRes, null, 2)}</ThemedText>
+            <ThemedText>{routeErr && JSON.stringify(routeErr, null, 2)}</ThemedText>
          </ScrollView>
-         {/* <ThemedText>{JSON.stringify(location, null, 2)}</ThemedText> */}
-      </View>
+      </SafeAreaView>
    )
 }
 

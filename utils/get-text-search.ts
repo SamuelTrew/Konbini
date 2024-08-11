@@ -14,11 +14,6 @@ type Period = {
 
 export type Place = {
    currentOpeningHours: {
-      openNow: boolean
-      periods: {
-         close: Period
-         open: Period
-      }
       weekdayDescriptions: string[]
    }
    displayName: {
@@ -46,7 +41,8 @@ export const getTextSearch = async (): Promise<Place[]> => {
 
 const headers = {
    "X-Goog-Api-Key": process.env.EXPO_PUBLIC_API_KEY as string,
-   "X-Goog-FieldMask": "places.location,places.displayName,places.currentOpeningHours",
+   "X-Goog-FieldMask":
+      "places.location,places.displayName.text,places.currentOpeningHours.weekdayDescriptions",
    "content-type": "application/json",
 }
 

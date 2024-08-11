@@ -1,7 +1,13 @@
-import { StyleSheet, Image, Platform, View } from "react-native"
+import { StyleSheet, View } from "react-native"
+
+import { ThemedText } from "@/components/ThemedText"
 
 export default function TabTwoScreen() {
-   return <View></View>
+   return (
+      <View>
+         <ThemedText>Hi</ThemedText>
+      </View>
+   )
 }
 
 const styles = StyleSheet.create({})
