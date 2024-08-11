@@ -1,31 +1,31 @@
 import { LAT, LONG } from "../constants/map"
 
 type Period = {
+   date: {
+      day: number
+      month: number
+      year: number
+   }
    day: number
    hour: number
    minute: number
    truncated: boolean
-   date: {
-      year: number
-      month: number
-      day: number
-   }
 }
 
 type Place = {
-   location: { latitude: number; longitude: number }
-   displayName: {
-      text: string
-      languageCode: string
-   }
    currentOpeningHours: {
-      weekdayDescriptions: string[]
       openNow: boolean
       periods: {
-         open: Period
          close: Period
+         open: Period
       }
+      weekdayDescriptions: string[]
    }
+   displayName: {
+      languageCode: string
+      text: string
+   }
+   location: { latitude: number; longitude: number }
 }
 
 export type Result = {
@@ -33,22 +33,18 @@ export type Result = {
 }
 
 export const getTextSearch = async (): Promise<Result> => {
-   const res = await fetch(
-      "https://places.googleapis.com/v1/places:searchText",
-      {
-         headers,
-         method: "POST",
-         body,
-      },
-   )
+   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      headers,
+      method: "POST",
+      body,
+   })
 
    return await res.json()
 }
 
 const headers = {
    "X-Goog-Api-Key": process.env.EXPO_PUBLIC_API_KEY as string,
-   "X-Goog-FieldMask":
-      "places.location,places.displayName,places.currentOpeningHours",
+   "X-Goog-FieldMask": "places.location,places.displayName,places.currentOpeningHours",
    "content-type": "application/json",
 }
 

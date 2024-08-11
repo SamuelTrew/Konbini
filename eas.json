@@ -19,7 +19,8 @@
       "production": {
          "env": {
             "EXPO_PUBLIC_API_KEY": ""
-         }}
+         }
+      }
    },
    "submit": {
       "production": {}
