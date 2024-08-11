@@ -2,18 +2,17 @@
 import { useEffect, useState } from "react"
 
 import * as Location from "expo-location"
-import { StyleSheet, Button, ScrollView } from "react-native"
+import { StyleSheet, Button, ScrollView, View } from "react-native"
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps"
 
 import { ThemedText } from "@/components/ThemedText"
-import { ThemedView } from "@/components/ThemedView"
 import { LAT, LONG } from "@/constants/map"
-import { getTextSearch, Result } from "@/utils/getTextSearch"
+import { getTextSearch, Place } from "@/utils/getTextSearch"
 
 export default function HomeScreen() {
    const [errMessage, setErr] = useState<string>()
    const [location, setLocation] = useState<Location.LocationObject>()
-   const [searchRes, setRes] = useState<Result>()
+   const [searchRes, setRes] = useState<Place[]>()
 
    const requestLocationPermission = async () => {
       const result = await Location.requestForegroundPermissionsAsync()
@@ -39,7 +38,7 @@ export default function HomeScreen() {
    }, [])
 
    return (
-      <ThemedView style={styles.container}>
+      <View style={styles.container}>
          <MapView
             camera={{
                zoom: 13,
@@ -60,7 +59,7 @@ export default function HomeScreen() {
             {location && (
                <Marker coordinate={{ latitude: LAT, longitude: LONG }} pinColor="green" />
             )}
-            {searchRes?.places?.map(({ location, displayName, currentOpeningHours }) => {
+            {searchRes?.map(({ location, displayName, currentOpeningHours }) => {
                const weekday = [
                   "Sunday",
                   "Monday",
@@ -95,7 +94,7 @@ export default function HomeScreen() {
             <ThemedText>{JSON.stringify(searchRes, null, 2)}</ThemedText>
          </ScrollView>
          {/* <ThemedText>{JSON.stringify(location, null, 2)}</ThemedText> */}
-      </ThemedView>
+      </View>
    )
 }
 

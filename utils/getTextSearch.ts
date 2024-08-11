@@ -1,4 +1,4 @@
-import { LAT, LONG } from "../constants/map"
+import { LAT, LONG, SHOPS } from "../constants/map"
 
 type Period = {
    date: {
@@ -12,7 +12,7 @@ type Period = {
    truncated: boolean
 }
 
-type Place = {
+export type Place = {
    currentOpeningHours: {
       openNow: boolean
       periods: {
@@ -28,18 +28,20 @@ type Place = {
    location: { latitude: number; longitude: number }
 }
 
-export type Result = {
-   places: Place[]
-}
+export const getTextSearch = async (): Promise<Place[]> => {
+   const results = await Promise.all(
+      SHOPS.map(async (shop) => {
+         const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+            headers,
+            method: "POST",
+            body: body(shop),
+         })
 
-export const getTextSearch = async (): Promise<Result> => {
-   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
-      headers,
-      method: "POST",
-      body,
-   })
+         return (await res.json()).places as Place[]
+      }),
+   )
 
-   return await res.json()
+   return results.flat()
 }
 
 const headers = {
@@ -48,17 +50,18 @@ const headers = {
    "content-type": "application/json",
 }
 
-const body = JSON.stringify({
-   textQuery: "7-Eleven",
-   locationBias: {
-      circle: {
-         center: {
-            latitude: LAT,
-            longitude: LONG,
+const body = (shop: string) =>
+   JSON.stringify({
+      textQuery: shop,
+      locationBias: {
+         circle: {
+            center: {
+               latitude: LAT,
+               longitude: LONG,
+            },
+            radius: 50.0,
          },
-         radius: 500.0,
       },
-   },
-   pageSize: 10,
-   openNow: true,
-})
+      pageSize: 3,
+      openNow: true,
+   })
