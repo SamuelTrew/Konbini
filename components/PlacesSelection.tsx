@@ -1,4 +1,4 @@
-import React, { Keyboard, SafeAreaView, StyleSheet, TextInput, View } from "react-native"
+import React, { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 import Material from "@expo/vector-icons/MaterialCommunityIcons"
 
 import { ThemedText } from "@/components/ThemedText"
@@ -30,7 +30,9 @@ export const PlacesSelection = () => {
                blurOnSubmit={false}
                editable={!disabled}
             />
-            <Material name="plus" onPress={submit} size={20} disabled={disabled} />
+            <TouchableOpacity onPress={submit}>
+               <Material name="plus" size={20} disabled={disabled} />
+            </TouchableOpacity>
          </View>
 
          <View style={styles.pills}>

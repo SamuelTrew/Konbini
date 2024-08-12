@@ -21,7 +21,7 @@ export default function HomeScreen() {
    const [nearestPlace, setNearest] = useState<LatLng>()
    const [route, setRoute] = useState<Route>()
    const [routeErr, setRouteErr] = useState<string>()
-   const {places: SHOPS} = usePlaces()
+   const { places: SHOPS } = usePlaces()
 
    return (
       <SafeAreaView style={styles.container}>
@@ -56,7 +56,7 @@ export default function HomeScreen() {
             />
          </MapView>
          <Button
-            title="Click"
+            title="Search"
             onPress={async () => {
                const results = await getTextSearch(SHOPS)
                setPlaces(results)
@@ -67,6 +67,7 @@ export default function HomeScreen() {
                   ),
                )
             }}
+            disabled={!location}
          />
          {errMessage && <ThemedText>{errMessage}</ThemedText>}
          <ThemedText>
