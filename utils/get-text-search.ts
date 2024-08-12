@@ -1,16 +1,4 @@
-import { LAT, LONG, SHOPS } from "../constants/map"
-
-type Period = {
-   date: {
-      day: number
-      month: number
-      year: number
-   }
-   day: number
-   hour: number
-   minute: number
-   truncated: boolean
-}
+import { LAT, LONG } from "../constants/map"
 
 export type Place = {
    currentOpeningHours: {
@@ -23,9 +11,9 @@ export type Place = {
    location: { latitude: number; longitude: number }
 }
 
-export const getTextSearch = async (): Promise<Place[]> => {
+export const getTextSearch = async (shops: string[]): Promise<Place[]> => {
    const results = await Promise.all(
-      SHOPS.map(async (shop) => {
+      shops.map(async (shop) => {
          const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
             headers,
             method: "POST",

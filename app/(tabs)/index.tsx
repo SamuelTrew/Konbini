@@ -12,6 +12,8 @@ import { LAT, LONG } from "@/constants/map"
 import { useLocation } from "@/hooks/use-location"
 import { getTextSearch, Place } from "@/utils/get-text-search"
 import { getNearestPlace } from "@/utils/getNearestPlace"
+import { useNavigation } from "expo-router"
+import { usePlaces } from "@/hooks/use-places"
 
 export default function HomeScreen() {
    const [places, setPlaces] = useState<Place[]>()
@@ -19,6 +21,7 @@ export default function HomeScreen() {
    const [nearestPlace, setNearest] = useState<LatLng>()
    const [route, setRoute] = useState<Route>()
    const [routeErr, setRouteErr] = useState<string>()
+   const {places: SHOPS} = usePlaces()
 
    return (
       <SafeAreaView style={styles.container}>
@@ -55,7 +58,7 @@ export default function HomeScreen() {
          <Button
             title="Click"
             onPress={async () => {
-               const results = await getTextSearch()
+               const results = await getTextSearch(SHOPS)
                setPlaces(results)
                setNearest(
                   getNearestPlace(
@@ -64,7 +67,7 @@ export default function HomeScreen() {
                   ),
                )
             }}
-         ></Button>
+         />
          {errMessage && <ThemedText>{errMessage}</ThemedText>}
          <ThemedText>
             {route ? `Distance: ${route.distance}. Time: ${route.duration}` : "No route exists"}
@@ -79,8 +82,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      marginHorizontal: 10,
-      marginVertical: 30,
+      margin: 10,
       height: "100%",
    },
    map: {

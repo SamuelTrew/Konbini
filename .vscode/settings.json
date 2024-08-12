@@ -2,5 +2,7 @@
    "editor.formatOnSave": true,
    "eslint.format.enable": true,
    "eslint.codeActionsOnSave.rules": null,
-   "editor.tabSize": 3
+   "editor.tabSize": 3,
+   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+   "prettier.configPath": ".prettierrc"
 }
