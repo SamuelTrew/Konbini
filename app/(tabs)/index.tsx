@@ -1,55 +1,69 @@
 /* eslint-disable prettier/prettier */
 import { useState } from "react"
-import { StyleSheet, Button, ScrollView } from "react-native"
+import { StyleSheet, Button, ScrollView, ActivityIndicator } from "react-native"
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import { MapMarkers } from "@/components/map-markers"
-import { Route } from "@/components/map-route/get-directions"
-import { MapViewRoute } from "@/components/map-route/map-view-route"
+import { RouteInfo } from "@/components/home/RouteInfo"
+import { Route } from "@/components/map-route/getDirections"
+import { MapViewRoute } from "@/components/map-route/MapViewRoute"
+import { MapMarkers } from "@/components/MapMarkers"
 import { ThemedText } from "@/components/ThemedText"
-import { LAT, LONG } from "@/constants/map"
-import { useLocation } from "@/hooks/use-location"
-import { usePlaces } from "@/hooks/use-places"
-import { getTextSearch, Place } from "@/utils/get-text-search"
+import { useLocation } from "@/hooks/useLocation"
+import { usePlaces } from "@/hooks/usePlaces"
 import { getNearestPlace } from "@/utils/getNearestPlace"
+import { getTextSearch, Place } from "@/utils/getTextSearch"
 
 export default function HomeScreen() {
    const [places, setPlaces] = useState<Place[]>()
-   const { location, errMessage } = useLocation()
+   const { location, errMessage, retryLocation, isLoading } = useLocation()
    const [nearestPlace, setNearest] = useState<LatLng>()
    const [route, setRoute] = useState<Route>()
    const [routeErr, setRouteErr] = useState<string>()
    const { places: SHOPS } = usePlaces()
 
+   if (isLoading) {
+      return (
+         <SafeAreaView style={styles.container}>
+            <ActivityIndicator color="#00ff00" size="large" />
+         </SafeAreaView>
+      )
+   }
+   if (!location) {
+      return (
+         <SafeAreaView style={styles.container}>
+            <Button title="Re-attempt to fetch location" onPress={retryLocation} />
+         </SafeAreaView>
+      )
+   }
+
+   const myLatLng: LatLng = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+   }
+
    return (
       <SafeAreaView style={styles.container}>
          <MapView
             camera={{
-               zoom: 13,
-               center: { latitude: LAT, longitude: LONG },
+               zoom: nearestPlace ? 15 : 13,
+               center: nearestPlace ? nearestPlace : myLatLng,
                heading: 0,
                pitch: 0,
             }}
             initialRegion={{
-               latitude: LAT,
-               longitude: LONG,
-               latitudeDelta: LAT,
-               longitudeDelta: LONG,
+               ...myLatLng,
+               latitudeDelta: myLatLng.latitude,
+               longitudeDelta: myLatLng.longitude,
             }}
             provider={PROVIDER_GOOGLE}
             style={styles.map}
          >
-            {location && (
-               <Marker coordinate={{ latitude: LAT, longitude: LONG }} pinColor="green" />
-            )}
+            {location && <Marker coordinate={myLatLng} pinColor="green" />}
             {places && <MapMarkers places={places} />}
             <MapViewRoute
                destination={nearestPlace}
-               origin={{
-                  latitude: LAT,
-                  longitude: LONG,
-               }}
+               origin={myLatLng}
                onError={setRouteErr}
                onSuccess={setRoute}
             />
@@ -58,23 +72,23 @@ export default function HomeScreen() {
             disabled={!location}
             title="Search"
             onPress={async () => {
-               const results = await getTextSearch(SHOPS)
+               const results = await getTextSearch(myLatLng, SHOPS)
                setPlaces(results)
                setNearest(
                   getNearestPlace(
-                     { latitude: LAT, longitude: LONG },
+                     myLatLng,
                      results.map((r) => r.location),
                   ),
                )
             }}
          />
          {errMessage && <ThemedText>{errMessage}</ThemedText>}
-         <ThemedText>
-            {route ? `Distance: ${route.distance}. Time: ${route.duration}` : "No route exists"}
-         </ThemedText>
-         <ScrollView>
-            <ThemedText>{routeErr && JSON.stringify(routeErr, null, 2)}</ThemedText>
-         </ScrollView>
+         <RouteInfo route={route} />
+         {routeErr && (
+            <ScrollView>
+               <ThemedText>{JSON.stringify(routeErr, null, 2)}</ThemedText>
+            </ScrollView>
+         )}
       </SafeAreaView>
    )
 }

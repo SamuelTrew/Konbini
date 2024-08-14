@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 export const useLocation = () => {
    const [errMessage, setErr] = useState<string>()
    const [location, setLocation] = useState<Location.LocationObject>()
+   const [isLoading, setIsLoading] = useState(true)
 
    const requestLocationPermission = async () => {
       const result = await Location.requestForegroundPermissionsAsync()
@@ -25,11 +26,13 @@ export const useLocation = () => {
    }
 
    useEffect(() => {
-      void requestLocationPermission()
+      void requestLocationPermission().finally(() => setIsLoading(false))
    }, [])
 
    return {
       location,
       errMessage,
+      retryLocation: requestLocationPermission,
+      isLoading,
    }
 }

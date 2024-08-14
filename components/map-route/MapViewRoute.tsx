@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { LatLng, Polyline } from "react-native-maps"
 
-import { getDirections, Route } from "./get-directions"
+import { getDirections, Route } from "./getDirections"
 
 type Props = {
    destination: LatLng | undefined

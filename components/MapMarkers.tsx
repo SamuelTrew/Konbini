@@ -1,7 +1,7 @@
 import { Callout, Marker } from "react-native-maps"
 
 import { ThemedText } from "./ThemedText"
-import { Place } from "@/utils/get-text-search"
+import { Place } from "@/utils/getTextSearch"
 
 type Props = {
    places: Place[]

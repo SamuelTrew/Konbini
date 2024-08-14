@@ -3,9 +3,11 @@ import { useState } from "react"
 import React, { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 
 import { ThemedText } from "@/components/ThemedText"
-import { usePlaces } from "@/hooks/use-places"
+import { usePlaces } from "@/hooks/usePlaces"
+import { useThemeColor } from "@/hooks/useThemeColor"
 
 export const PlacesSelection = () => {
+   const borderColor = useThemeColor({}, "text")
    const { places, setPlaces } = usePlaces()
    const disabled = places.length >= 5
 
@@ -38,7 +40,7 @@ export const PlacesSelection = () => {
          <View style={styles.pills}>
             {places.map((place) => {
                return (
-                  <View key={place} style={styles.pill}>
+                  <View key={place} style={[{ borderColor }, styles.pill]}>
                      <ThemedText>{place}</ThemedText>
                      <Material
                         color="#ff6666"
@@ -93,7 +95,6 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       paddingHorizontal: 8,
       paddingVertical: 2,
-      borderColor: "black",
       borderWidth: 1,
       textAlign: "center",
    },

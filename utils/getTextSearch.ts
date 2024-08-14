@@ -1,4 +1,4 @@
-import { LAT, LONG } from "../constants/map"
+import { LatLng } from "react-native-maps"
 
 export type Place = {
    currentOpeningHours: {
@@ -8,16 +8,16 @@ export type Place = {
       languageCode: string
       text: string
    }
-   location: { latitude: number; longitude: number }
+   location: LatLng
 }
 
-export const getTextSearch = async (shops: string[]): Promise<Place[]> => {
+export const getTextSearch = async (currentLocation: LatLng, shops: string[]): Promise<Place[]> => {
    const results = await Promise.all(
       shops.map(async (shop) => {
          const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
             headers,
             method: "POST",
-            body: body(shop),
+            body: body(currentLocation, shop),
          })
 
          return (await res.json()).places as Place[]
@@ -34,15 +34,12 @@ const headers = {
    "content-type": "application/json",
 }
 
-const body = (shop: string) =>
+const body = (currentLocation: LatLng, shop: string) =>
    JSON.stringify({
       textQuery: shop,
       locationBias: {
          circle: {
-            center: {
-               latitude: LAT,
-               longitude: LONG,
-            },
+            center: currentLocation,
             radius: 50.0,
          },
       },

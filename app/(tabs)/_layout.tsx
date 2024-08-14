@@ -4,7 +4,7 @@ import { useColorScheme } from "react-native"
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon"
 import { Colors } from "@/constants/Colors"
-import { PlacesProvider } from "@/hooks/use-places"
+import { PlacesProvider } from "@/hooks/usePlaces"
 
 export default function TabLayout() {
    const colorScheme = useColorScheme()
