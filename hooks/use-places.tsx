@@ -14,9 +14,9 @@ export const usePlaces = () => {
 const KEY = "places"
 
 type PlacesState = {
+   errMessage?: string
    places: string[]
    setPlaces: (places: string[]) => void
-   errMessage?: string
 }
 const PlacesContext = createContext<PlacesState | undefined>(undefined)
 

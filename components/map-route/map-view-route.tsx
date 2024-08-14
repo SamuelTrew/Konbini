@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { LatLng, Polyline } from "react-native-maps"
 
 import { getDirections, Route } from "./get-directions"
@@ -13,11 +13,7 @@ type Props = {
 export const MapViewRoute = ({ origin, destination, onSuccess, onError }: Props) => {
    const [coordinates, setCoordinates] = useState<LatLng[]>([])
 
-   useEffect(() => {
-      fetchRoute()
-   }, [origin, destination])
-
-   const fetchRoute = async () => {
+   const fetchRoute = useCallback(async () => {
       if (!origin || !destination) return
 
       try {
@@ -27,7 +23,11 @@ export const MapViewRoute = ({ origin, destination, onSuccess, onError }: Props)
       } catch (error) {
          onError?.(error)
       }
-   }
+   }, [origin, destination, onSuccess, onError])
+
+   useEffect(() => {
+      void fetchRoute()
+   }, [fetchRoute])
 
    return (
       <Polyline

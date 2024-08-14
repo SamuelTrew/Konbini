@@ -1,9 +1,9 @@
-import React, { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 import Material from "@expo/vector-icons/MaterialCommunityIcons"
+import { useState } from "react"
+import React, { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 
 import { ThemedText } from "@/components/ThemedText"
 import { usePlaces } from "@/hooks/use-places"
-import { useState } from "react"
 
 export const PlacesSelection = () => {
    const { places, setPlaces } = usePlaces()
@@ -23,30 +23,30 @@ export const PlacesSelection = () => {
       <View style={styles.container}>
          <View style={[styles.inputContainer, disabled && styles.disabled]}>
             <TextInput
+               blurOnSubmit={false}
+               editable={!disabled}
                style={[styles.input, disabled && styles.disabled]}
                value={adjustedValue}
                onChangeText={setValue}
                onSubmitEditing={submit}
-               blurOnSubmit={false}
-               editable={!disabled}
             />
             <TouchableOpacity onPress={submit}>
-               <Material name="plus" size={20} disabled={disabled} />
+               <Material disabled={disabled} name="plus" size={20} />
             </TouchableOpacity>
          </View>
 
          <View style={styles.pills}>
             {places.map((place) => {
                return (
-                  <View style={styles.pill} key={place}>
+                  <View key={place} style={styles.pill}>
                      <ThemedText>{place}</ThemedText>
                      <Material
+                        color="#ff6666"
                         name="delete"
+                        size={20}
                         onPress={() => {
                            setPlaces(places.filter((p) => p !== place))
                         }}
-                        size={20}
-                        color="#ff6666"
                      />
                   </View>
                )

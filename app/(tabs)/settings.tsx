@@ -1,9 +1,9 @@
-import React, { SafeAreaView, StyleSheet, View } from "react-native"
 import * as Application from "expo-application"
+import React, { SafeAreaView, StyleSheet, View } from "react-native"
 
+import { PlacesSelection } from "../../components/PlacesSelection"
 import { ThemedText } from "@/components/ThemedText"
 import { usePlaces } from "@/hooks/use-places"
-import { PlacesSelection } from "../../components/PlacesSelection"
 
 export default function Settings() {
    const { errMessage } = usePlaces()

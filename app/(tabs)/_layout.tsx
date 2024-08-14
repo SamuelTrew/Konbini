@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router"
 import React from "react"
-import { Text, useColorScheme } from "react-native"
+import { useColorScheme } from "react-native"
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon"
 import { Colors } from "@/constants/Colors"
@@ -20,21 +20,29 @@ export default function TabLayout() {
                name="index"
                options={{
                   title: "Home",
-                  tabBarIcon: ({ color, focused }) => (
-                     <TabBarIcon color={color} name={focused ? "home" : "home-outline"} />
-                  ),
+                  tabBarIcon: tabIcon("home"),
                }}
             />
             <Tabs.Screen
                name="settings"
                options={{
                   title: "Settings",
-                  tabBarIcon: ({ color, focused }) => (
-                     <TabBarIcon color={color} name={focused ? "settings" : "settings-outline"} />
-                  ),
+                  tabBarIcon: tabIcon("settings"),
                }}
             />
          </Tabs>
       </PlacesProvider>
    )
 }
+
+type TabIconProps = {
+   color: string
+   focused: boolean
+   size: number
+}
+
+const tabIcon =
+   (name: "home" | "settings") =>
+   ({ color, focused }: TabIconProps) => {
+      return <TabBarIcon color={color} name={focused ? name : `${name}-outline`} />
+   }

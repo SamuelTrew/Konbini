@@ -62,6 +62,8 @@ module.exports = {
       "import/first": "warn",
       // Makes usage of things like @bind less clean sadly
       "import/no-named-as-default": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
    },
    settings: {
       react: {
@@ -94,10 +96,6 @@ module.exports = {
             "@typescript-eslint/no-use-before-define": "off",
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-this-alias": "off",
-            "@typescript-eslint/explicit-function-return-type": [
-               "warn",
-               { allowExpressions: true },
-            ],
             "@typescript-eslint/member-delimiter-style": [
                "error",
                {

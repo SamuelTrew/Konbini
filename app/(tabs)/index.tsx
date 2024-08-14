@@ -10,10 +10,9 @@ import { MapViewRoute } from "@/components/map-route/map-view-route"
 import { ThemedText } from "@/components/ThemedText"
 import { LAT, LONG } from "@/constants/map"
 import { useLocation } from "@/hooks/use-location"
+import { usePlaces } from "@/hooks/use-places"
 import { getTextSearch, Place } from "@/utils/get-text-search"
 import { getNearestPlace } from "@/utils/getNearestPlace"
-import { useNavigation } from "expo-router"
-import { usePlaces } from "@/hooks/use-places"
 
 export default function HomeScreen() {
    const [places, setPlaces] = useState<Place[]>()
@@ -56,6 +55,7 @@ export default function HomeScreen() {
             />
          </MapView>
          <Button
+            disabled={!location}
             title="Search"
             onPress={async () => {
                const results = await getTextSearch(SHOPS)
@@ -67,7 +67,6 @@ export default function HomeScreen() {
                   ),
                )
             }}
-            disabled={!location}
          />
          {errMessage && <ThemedText>{errMessage}</ThemedText>}
          <ThemedText>
