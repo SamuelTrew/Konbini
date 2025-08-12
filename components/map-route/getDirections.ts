@@ -9,6 +9,9 @@ export type Route = {
 }
 
 export const getDirections = async (origin: LatLng, destination: LatLng): Promise<Route> => {
+   // eslint-disable-next-line no-console
+   console.log("Making call to fetch directions")
+
    const res = await fetch("https://routes.googleapis.com/directions/v2:computeRoutes", {
       method: "POST",
       headers,
@@ -48,7 +51,10 @@ const body = (origin: LatLng, destination: LatLng) =>
       },
       destination: {
          location: {
-            latLng: destination,
+            latLng: {
+               latitude: destination.latitude,
+               longitude: destination.longitude,
+            },
          },
       },
       travelMode: "walk",

@@ -62,8 +62,8 @@ module.exports = {
       "import/first": "warn",
       // Makes usage of things like @bind less clean sadly
       "import/no-named-as-default": "off",
-      "react/react-in-jsx-scope": "off",
-      "react/jsx-uses-react": "off",
+      "react/react-in-jsx-scope": "on",
+      "react/jsx-uses-react": "on",
    },
    settings: {
       react: {

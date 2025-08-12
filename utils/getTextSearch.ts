@@ -5,13 +5,16 @@ export type Place = {
       weekdayDescriptions: string[]
    }
    displayName: {
-      languageCode: string
       text: string
    }
    location: LatLng
+   rating: number
 }
 
 export const getTextSearch = async (currentLocation: LatLng, shops: string[]): Promise<Place[]> => {
+   // eslint-disable-next-line no-console
+   console.log("Making call to do search")
+
    const results = await Promise.all(
       shops.map(async (shop) => {
          const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
@@ -24,13 +27,13 @@ export const getTextSearch = async (currentLocation: LatLng, shops: string[]): P
       }),
    )
 
-   return results.flat()
+   return results.flat().filter(Boolean)
 }
 
 const headers = {
    "X-Goog-Api-Key": process.env.EXPO_PUBLIC_API_KEY as string,
    "X-Goog-FieldMask":
-      "places.location,places.displayName.text,places.currentOpeningHours.weekdayDescriptions",
+      "places.location,places.displayName.text,places.currentOpeningHours.weekdayDescriptions,places.rating",
    "content-type": "application/json",
 }
 
